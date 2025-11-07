@@ -1,0 +1,79 @@
+
+---
+title: "Brazilian Market Portfolio Optimization"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(quantmod)
+library(tidyverse)
+library(PerformanceAnalytics)
+library(xts)
+```
+
+
+## 1. Load Data
+
+```{r}
+tickers <- c("ITUB4.SA","VALE3.SA","PETR4.SA","BBDC4.SA","WEGE3.SA")
+getSymbols(tickers, from="2018-01-01", to=Sys.Date())
+
+prices <- map(tickers, ~Ad(get(.))) %>% reduce(merge)
+colnames(prices) <- tickers
+```
+
+## 2. Compute Returns
+
+```{r}
+returns <- na.omit(ROC(prices, type="continuous"))
+mean_returns <- colMeans(returns) * 252
+cov_matrix <- cov(returns) * 252
+```
+
+## 3. Monte Carlo Simulation
+
+```{r}
+set.seed(123)
+num_portfolios <- 20000
+results <- matrix(nrow = num_portfolios, ncol = 3 + length(tickers))
+colnames(results) <- c("Return","Volatility","Sharpe", tickers)
+
+for (i in 1:num_portfolios) {
+  weights <- runif(length(tickers))
+  weights <- weights / sum(weights)
+  port_return <- sum(weights * mean_returns)
+  port_vol <- sqrt(t(weights) %*% cov_matrix %*% weights)
+  port_sharpe <- port_return / port_vol
+  results[i,] <- c(port_return, port_vol, port_sharpe, weights)
+}
+
+results_df <- as.data.frame(results)
+```
+
+## 4. Identify Optimal Portfolios
+
+```{r}
+max_sharpe <- results_df[which.max(results_df$Sharpe),]
+min_vol <- results_df[which.min(results_df$Volatility),]
+```
+
+## 5. Plot Efficient Frontier
+
+```{r}
+library(ggplot2)
+
+ggplot(results_df, aes(x=Volatility, y=Return, color=Sharpe)) +
+  geom_point(alpha=0.5) +
+  theme_minimal() +
+  labs(title="Efficient Frontier",
+       x="Portfolio Volatility",
+       y="Portfolio Return")
+```
+
+## 6. Results
+
+```{r}
+max_sharpe
+min_vol
+```
+
