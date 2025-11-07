@@ -14,7 +14,7 @@ This project analyzes a selection of major Brazilian publicly traded companies a
 
 ---
 
-### 📊 Assets Included
+### Assets Included
 | Ticker      | Company Name                      | Sector                  |
 |------------|-----------------------------------|-------------------------|
 | ITUB4.SA   | Itaú Unibanco                     | Banking & Finance       |
