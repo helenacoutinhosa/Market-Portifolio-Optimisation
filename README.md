@@ -36,10 +36,10 @@ This project analyzes a selection of major Brazilian publicly traded companies a
 
 ### Methodology
 This project uses:
-- **Daily log returns** for return consistency
-- **Annualization factor of 252 trading days**
-- **Random weight generation** with normalization for portfolio simulations
-- **Sharpe Ratio** as performance metric:
+- Daily log returns for return consistency
+- Annualization factor of 252 trading days
+- Random weight generation with normalization for portfolio simulations
+- Sharpe Ratio as performance metric:
 
 \[
 \text{Sharpe Ratio} = \frac{\text{Expected Return}}{\text{Portfolio Volatility}}
